@@ -155,6 +155,35 @@ npx ts-node ./src/main.ts html output.html
 
 Результат ([`output.html`](./output.html)):
 
+```html
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Структурні патерни</h1>
+    <h2>Основні патерни</h2>
+    <p>Розглянемо два важливих структурних патерни.</p>
+    <h2>Composite</h2>
+    <p>Дозволяє створювати деревоподібні структури об&#039;єктів.</p>
+    <ul>
+      <li>Спрощує структуру</li>
+      <li>Гнучкий код</li>
+      <li>Легка підтримка</li>
+    </ul>
+    <h2>Bridge</h2>
+    <p>Розділяє абстракцію та реалізацію.</p>
+    <ul>
+      <li>Незалежні зміни</li>
+      <li>Краща масштабованість</li>
+    </ul>
+  </body>
+</html>
+```
+
 ## Розширення
 
 Для додавання нового формату виводу:
@@ -164,53 +193,3 @@ npx ts-node ./src/main.ts html output.html
 3. Реалізуйте необхідні методи (`renderHeader`, `renderParagraph`, `renderList`)
 4. Опціонально переопишіть `wrapDocument` для обертки контенту
 5. Додайте новий формат у `RendererFactory`
-
-## Реалізація паттернів
-
-### Composite (Компонувальник)
-
-Паттерн реалізований в класі `Section`:
-
-```typescript
-export class Section implements DocNode {
-  private children: DocNode[] = [];
-
-  add(child: DocNode): void {
-    this.children.push(child);
-  }
-
-  render(): string {
-    // Рендерує заголовок та всіх дочірніх елементів
-    const renderedTitle = this.renderer.renderHeader(this.level, this.title);
-    const renderedChildren = this.children
-      .map((child) => child.render())
-      .join('\n\n');
-    return `${renderedTitle}\n\n${renderedChildren}`;
-  }
-}
-```
-
-**Переваги:**
-
-- Дозволяє створювати складні структури з простих об'єктів
-- Клієнт працює однаково з простими та складними елементами
-- Легко розширювати нові типи елементів
-
-### Bridge (Міст)
-
-Паттерн відокремлює абстракцію (структура документа) від реалізації (формат виводу):
-
-```typescript
-export interface DocRenderer {
-  renderHeader(level: number, text: string): string;
-  renderParagraph(text: string): string;
-  renderList(items: string[]): string;
-  wrapDocument(content: string): string;
-}
-```
-
-**Переваги:**
-
-- Можна змінювати формат виводу незалежно від структури документа
-- Просто додавати нові формати без змін в основному коді
-- Зменшення зв'язків між класами
