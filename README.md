@@ -16,7 +16,7 @@
 
 ## Структура проекту
 
-```
+```bash
 src/
 ├── interfaces/              # Інтерфейси
 │   ├── DocNode.ts           # Базовий інтерфейс для всіх елементів документа
@@ -87,7 +87,7 @@ npm start -- plain output.txt     # Зберегти як текст
 npx ts-node ./src/main.ts markdown output.md
 ```
 
-Результат ([`output.md`](./output.md)):
+Результат [`output.md`](./output.md):
 
 ```markdown
 # Структурні патерни
@@ -118,7 +118,7 @@ npx ts-node ./src/main.ts markdown output.md
 npx ts-node ./src/main.ts plain output.txt
 ```
 
-Результат ([`output.txt`](./output.txt)):
+Результат [`output.txt`](./output.txt):
 
 ```
 Структурні патерни
@@ -153,7 +153,7 @@ Bridge
 npx ts-node ./src/main.ts html output.html
 ```
 
-Результат ([`output.html`](./output.html)):
+Результат [`output.html`](./output.html):
 
 ```html
 <!DOCTYPE html>
