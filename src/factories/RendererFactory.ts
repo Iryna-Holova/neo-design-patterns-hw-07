@@ -7,7 +7,20 @@ export type RendererType = 'html' | 'markdown' | 'plain';
 
 export class RendererFactory {
   static create(type: RendererType): DocRenderer {
-    // TODO: Implement the create method
+    switch (type) {
+      case 'html':
+        return new HTMLRenderer();
+      case 'markdown':
+        return new MarkdownRenderer();
+      case 'plain':
+        return new PlainTextRenderer();
+      default:
+        throw new Error(
+          `Unsupported renderer type: ${type}\n
+          Supported types are: ${RendererFactory.getSupportedFormats().join(', ')}
+          `,
+        );
+    }
   }
 
   static getSupportedFormats(): RendererType[] {

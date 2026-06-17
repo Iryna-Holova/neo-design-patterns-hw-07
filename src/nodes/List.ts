@@ -7,6 +7,6 @@ export class List implements DocNode {
     private renderer: DocRenderer,
   ) {}
   render(): string {
-    // TODO: Implement the render method
+    return this.renderer.renderList(this.items);
   }
 }

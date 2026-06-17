@@ -18,21 +18,21 @@
 
 ```
 src/
-├── interfaces/          # Інтерфейси
-│   ├── DocNode.ts      # Базовий інтерфейс для всіх елементів документа
-│   └── DocRenderer.ts  # Інтерфейс для рендерерів
-├── renderers/          # Реалізації рендерерів
+├── interfaces/              # Інтерфейси
+│   ├── DocNode.ts           # Базовий інтерфейс для всіх елементів документа
+│   └── DocRenderer.ts       # Інтерфейс для рендерерів
+├── renderers/               # Реалізації рендерерів
 │   ├── BaseRenderer.ts      # Базовий клас для рендерерів
 │   ├── HTMLRenderer.ts      # HTML формат
 │   ├── MarkdownRenderer.ts  # Markdown формат
 │   └── PlainTextRenderer.ts # Простий текст
-├── nodes/              # Елементи документа
-│   ├── List.ts        # Список
-│   ├── Paragraph.ts   # Параграф
-│   └── Section.ts     # Секція (Composite)
-├── factories/          # Фабрики
-│   └── RendererFactory.ts  # Фабрика для створення рендерерів
-└── main.ts            # Точка входу
+├── nodes/                   # Елементи документа
+│   ├── List.ts              # Список
+│   ├── Paragraph.ts         # Параграф
+│   └── Section.ts           # Секція (Composite)
+├── factories/               # Фабрики
+│   └── RendererFactory.ts   # Фабрика для створення рендерерів
+└── main.ts                  # Точка входу
 ```
 
 ## Патерни проектування
@@ -65,8 +65,8 @@ npm install
 
 ```bash
 npm start -- markdown  # Markdown формат
-npm start -- plain    # Простий текст
-npm start -- html     # HTML формат
+npm start -- plain     # Простий текст
+npm start -- html      # HTML формат
 ```
 
 ### Збереження у файл
@@ -79,11 +79,138 @@ npm start -- plain output.txt     # Зберегти як текст
 
 ``
 
+## Результати роботи
+
+### Markdown формат
+
+```bash
+npx ts-node ./src/main.ts markdown output.md
+```
+
+Результат ([`output.md`](./output.md)):
+
+```markdown
+# Структурні патерни
+
+## Основні патерни
+
+Розглянемо два важливих структурних патерни.
+
+## Composite
+
+Дозволяє створювати деревоподібні структури об'єктів.
+
+- Спрощує структуру
+- Гнучкий код
+- Легка підтримка
+
+## Bridge
+
+Розділяє абстракцію та реалізацію.
+
+- Незалежні зміни
+- Краща масштабованість
+```
+
+### Plain Text формат
+
+```bash
+npx ts-node ./src/main.ts plain output.txt
+```
+
+Результат ([`output.txt`](./output.txt)):
+
+```
+Структурні патерни
+==================
+
+Основні патерни
+---------------
+
+Розглянемо два важливих структурних патерни.
+
+Composite
+---------
+
+Дозволяє створювати деревоподібні структури об'єктів.
+
+* Спрощує структуру
+* Гнучкий код
+* Легка підтримка
+
+Bridge
+------
+
+Розділяє абстракцію та реалізацію.
+
+* Незалежні зміни
+* Краща масштабованість
+```
+
+### HTML формат
+
+```bash
+npx ts-node ./src/main.ts html output.html
+```
+
+Результат ([`output.html`](./output.html)):
+
 ## Розширення
 
 Для додавання нового формату виводу:
 
 1. Створіть новий клас рендерера в `src/renderers/`
 2. Успадкуйте його від `BaseRenderer`
-3. Реалізуйте необхідні методи
-4. Додайте новий формат у `RendererFactory`
+3. Реалізуйте необхідні методи (`renderHeader`, `renderParagraph`, `renderList`)
+4. Опціонально переопишіть `wrapDocument` для обертки контенту
+5. Додайте новий формат у `RendererFactory`
+
+## Реалізація паттернів
+
+### Composite (Компонувальник)
+
+Паттерн реалізований в класі `Section`:
+
+```typescript
+export class Section implements DocNode {
+  private children: DocNode[] = [];
+
+  add(child: DocNode): void {
+    this.children.push(child);
+  }
+
+  render(): string {
+    // Рендерує заголовок та всіх дочірніх елементів
+    const renderedTitle = this.renderer.renderHeader(this.level, this.title);
+    const renderedChildren = this.children
+      .map((child) => child.render())
+      .join('\n\n');
+    return `${renderedTitle}\n\n${renderedChildren}`;
+  }
+}
+```
+
+**Переваги:**
+
+- Дозволяє створювати складні структури з простих об'єктів
+- Клієнт працює однаково з простими та складними елементами
+- Легко розширювати нові типи елементів
+
+### Bridge (Міст)
+
+Паттерн відокремлює абстракцію (структура документа) від реалізації (формат виводу):
+
+```typescript
+export interface DocRenderer {
+  renderHeader(level: number, text: string): string;
+  renderParagraph(text: string): string;
+  renderList(items: string[]): string;
+  wrapDocument(content: string): string;
+}
+```
+
+**Переваги:**
+
+- Можна змінювати формат виводу незалежно від структури документа
+- Просто додавати нові формати без змін в основному коді
+- Зменшення зв'язків між класами
